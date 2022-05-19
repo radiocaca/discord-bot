@@ -1,5 +1,6 @@
 import Web3 from "web3";
-import { Client, Intents, Interaction } from "discord.js";
+import { Kyc } from "./kyc";
+import { Client, Intents, Interaction, Guild, GuildMember } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { REST } from "@discordjs/rest";
 import { Routes } from 'discord-api-types/v9';
@@ -8,6 +9,7 @@ import { Routes } from 'discord-api-types/v9';
  * RACA discord bot
  */
 export class Bot {
+  private kyc: Kyc;
   public client: Client;
 
   /**
@@ -29,17 +31,24 @@ export class Bot {
   constructor() {
     console.log("Conneting to discord...");
     this.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+    this.kyc = new Kyc();
   }
 
-  private async handleVerify(interaction: Interaction, web3: Web3) {
+  private async handleVerify(interaction: Interaction, guild: string, web3: Web3) {
     if (!interaction.isCommand()) {
       return;
     }
 
     const sig = interaction.options.getString('signature');
     try {
+      // get user ethreum address
       const address = web3.eth.accounts.recover(String(web3.utils.sha3("raca")), String(sig));
-      interaction.reply("Your ethereum address is: " + String(address));
+      if (!await this.kyc.verify(address)) {
+        interaction.reply("verify failed");
+      }
+
+      // update role when verified
+      (interaction.member as GuildMember).roles.add("verified");
     } catch (err) {
       console.log(err)
       interaction.reply("verify failed");
@@ -88,7 +97,7 @@ export class Bot {
         case "ping":
           await interaction.reply("pong");
         case "verify":
-          await this.handleVerify(interaction, web3);
+          await this.handleVerify(interaction, guild, web3);
         default:
           return;
       }

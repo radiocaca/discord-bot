@@ -37,21 +37,26 @@ export class Kyc {
   }
 
   /**
-   * verify if address is validated
+   * verify collection via nft api
+   *
+   * @param {string} address owner address
+   * @param {number} offset page offset
+   * @param {number} size page size
    */
-  public async verify(address: string): Promise<boolean> {
-    if (this.addresses.includes(address)) return true;
-
+  private async verifyCollection(
+    address: string,
+    offset: number,
+    size: number
+  ): Promise<boolean> {
     try {
       const res: any = await axios.post(
         String(process.env.NFT_API),
         JSON.stringify({
           ownerAddress: address,
-          collectionAddresses: this.contracts,
           page: {
             lastSort: [],
-            offset: 0,
-            size: 20
+            offset,
+            size,
           },
         }),
         {
@@ -62,13 +67,35 @@ export class Kyc {
         }
       );
 
-      if (res.data && res.data.length > 0) {
-        return true;
+      const data = res.data.data;
+      if (res.data === undefined || data === undefined || data.length === 0) {
+        return false;
       }
-    } catch (_error) {
+
+      // check if have validated token
+      for (const item of data) {
+        if (this.contracts.includes(item.collectionAddress)) return true;
+      }
+
+      // rerun this function to the next pages
+      if (data.length === size) {
+        return await this.verifyCollection(address, offset + size, size);
+      }
+    } catch (_e) {
       return false;
     }
 
-    return false
+    return false;
+  }
+
+  /**
+   * verify if address is validated
+   *
+   * @param {string} address owner address
+   */
+  public async verify(address: string): Promise<boolean> {
+    if (this.addresses.includes(address)) return true;
+
+    return await this.verifyCollection(address, 0, 10000);
   }
 }
