@@ -8,7 +8,6 @@ import Web3 from "web3";
   dotenv.config();
 
   // await Bot.Start();
-  const web3 = new Web3(String(process.env.INFURA));
-  const kyc = new Kyc(web3);
+  const kyc = new Kyc();
   console.log(await kyc.verify("0xdbfd76af2157dc15ee4e57f3f942bb45ba84af24"));
 })()
