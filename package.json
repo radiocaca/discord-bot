@@ -1,13 +1,9 @@
 {
   "private": true,
-  "name": "discord-bot",
-  "version": "1.0.0",
-  "repository": "https://github.com/radiocaca/discord-bot.git",
-  "license": "MIT",
-  "dependencies": {
-    "dotenv": "^16.0.1",
-    "ethers": "^5.6.6"
-  },
+  "workspaces": [
+    "packages/bot",
+    "packages/connect"
+  ],
   "devDependencies": {
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"
