@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.--raca-bg {
+    background-image:
+        url(/bg_left.png),
+        url(/bg.png),
+        url(/bg_right.png),
+        url(/bg_circles.svg);
+    background-size:
+        10rem 20rem,
+        cover,
+        13rem 28rem,
+        1.5rem 3rem;
+    background-repeat:
+        no-repeat,
+        no-repeat,
+        no-repeat,
+        no-repeat;
+    background-position:
+        bottom left,
+        center,
+        center right,
+        center 70%;
+}
+
