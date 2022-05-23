@@ -3,7 +3,7 @@ import { FC } from "react";
 
 const Logo: FC<{name: string}> = ({ name }) => {
     return(
-        <div className="xl:w-full w-1 /4 flex flex - row xl: justify - center">
+        <div className="xl:w-full w-1/4 flex flex-row xl:justify-center">
             <img src={`/${name.toLowerCase()}.png`}  className="lg:h-12 lg:w-12 h-8 w-8"/>
         </div>
     );
