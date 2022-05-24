@@ -41,9 +41,6 @@ export const WalletButton: FC<{
 export const Wallets: FC<{
 }> = ({ }) => {
     const { provider, setAccounts } = useContext(ProviderContext);
-    if (provider !== undefined) {
-        return <></>;
-    }
 
     return (
         <div className="w-full grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 xl:gap-8 md:gap-10 gap-3 p-10" style={{ maxWidth: "1400px" }}>

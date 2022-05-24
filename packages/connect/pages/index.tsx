@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { useEffect, useContext } from "react";
 import { Web3Provider } from "@ethersproject/providers";
 import Head from 'next/head'
-import { Header, Footer, Wallets, Top } from "components";
+import { Header, Footer, Wallets, Top, Sign } from "components";
 
 const Home: NextPage = () => {
     const { provider, setProvider, setAccounts } = useContext(ProviderContext);
@@ -32,7 +32,8 @@ const Home: NextPage = () => {
             <Top />
             <Header />
 
-            <Wallets />
+            {!provider && <Wallets />}
+            {provider && <Sign />}
 
             <div className="flex flex-1"></div>
         </div>
