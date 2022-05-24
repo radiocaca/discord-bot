@@ -1,5 +1,5 @@
 import Config from "./config";
-import { Client, Intents, Interaction, Guild, GuildMember } from "discord.js";
+import { Client, Intents, Interaction, Guild, GuildMember, User } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { REST } from "@discordjs/rest";
 import { Routes } from 'discord-api-types/v9';
@@ -34,6 +34,15 @@ export class Bot {
   public async login(): Promise<void> {
     return this.client.login(this.config.token)
       .then(() => console.log('Successfully logged in.')).catch(console.error);
+  }
+
+  /**
+   * udpate verified role
+   */
+  public async updateRole(user: string) {
+    const guild: Guild = this.client.guilds.cache.get(this.config.guild) as Guild;
+    const member: GuildMember = guild.members.cache.get(user) as GuildMember
+    await member.roles.add(this.config.verifiedRole);
   }
 
   /**

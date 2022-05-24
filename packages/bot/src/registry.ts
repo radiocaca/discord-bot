@@ -8,6 +8,7 @@ import koaBody from "koa-body"
 import Router from "@koa/router";
 import Web3 from "web3";
 import Config from "./config";
+import { GuildMember } from "discord.js";
 
 export class Registry {
   bot: Bot;
@@ -26,15 +27,28 @@ export class Registry {
    * serve registry
    */
   public serve() {
-    const config = new Config;
     const app = new Koa();
     const router = new Router();
 
     router.post("/verify", async (ctx) => {
       const sig: string = ctx.request.body.signature;
-      if (!sig) return;
+      const user: string = ctx.request.body.user;
+      if (!sig || !user) return;
 
-      // this.bot
+      try {
+        // get user ethreum address
+        const address = this.web3.eth.accounts.recover(
+          String(this.web3.utils.sha3("raca")),
+          String(sig),
+        );
+        if (!await this.kyc.verify(address)) {
+          // response verify failed
+        }
+
+        await this.bot.updateRole(user);
+      } catch (err) {
+        // response verify failed
+      }
     })
 
     app

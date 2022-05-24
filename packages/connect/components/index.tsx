@@ -1,4 +1,4 @@
 export { Header } from "./Header";
 export { Footer } from "./Footer";
-export { WalletButton } from "./WalletButton";
+export { WalletButton, Wallets } from "./WalletButton";
 export { Top } from "./Top";
