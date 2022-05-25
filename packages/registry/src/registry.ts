@@ -5,9 +5,11 @@ import Koa from "koa";
 import Bot from "./bot";
 import { Kyc } from "./kyc";
 import koaBody from "koa-body"
+import cors from "@koa/cors";
 import Router from "@koa/router";
 import { ethers } from "ethers";
 import Config from "./config";
+
 
 export class Registry {
   bot: Bot;
@@ -45,11 +47,24 @@ export class Registry {
           }
         }
 
-        await this.bot.updateRole(user);
+        if (!await this.bot.updateRole(user)) {
+          ctx.body = {
+            ok: false,
+            err: "Member not exists",
+            errHelper: "please click the correct link sent by discord bot"
+          }
+        } else {
+          ctx.body = {
+            ok: true,
+            err: "",
+            errHelper: ""
+          }
+        }
       } catch (err) {
+        console.log(err);
         ctx.body = {
           ok: false,
-          err: err,
+          err: JSON.stringify(err),
           errHelper: "Please try again later"
         }
       }
@@ -58,6 +73,7 @@ export class Registry {
     const port = Number(process.env.REGISTRY_PORT);
     console.log(`registry listening at ${port}`)
     app
+      .use(cors())
       .use(koaBody())
       .use(router.routes())
       .use(router.allowedMethods())

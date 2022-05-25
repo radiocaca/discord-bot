@@ -25,7 +25,7 @@ export class Bot {
   constructor() {
     console.log("Conneting to discord...");
     this.config = new Config();
-    this.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+    this.client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
   }
 
   /**
@@ -39,10 +39,17 @@ export class Bot {
   /**
    * udpate verified role
    */
-  public async updateRole(user: string) {
+  public async updateRole(user: string): Promise<boolean> {
     const guild: Guild = this.client.guilds.cache.get(this.config.guild) as Guild;
-    const member: GuildMember = guild.members.cache.get(user) as GuildMember
+    let member: GuildMember | undefined = guild.members.cache.get(user);
+    if (member === undefined) {
+      await guild.members.fetch();
+      member = guild.members.cache.get(user);
+    }
+
+    if (!member) return false;
     await member.roles.add(this.config.verifiedRole);
+    return true;
   }
 
   /**

@@ -22,7 +22,10 @@ export const WalletButton: FC<{
         //
         // only support metamask for now
         if (name === "Metamask" && signer === undefined) {
-            setSigner((new ethers.providers.Web3Provider((window as any).ethereum)).getSigner());
+            const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+            await provider.send("eth_requestAccounts", []);
+            const mbSigner = provider.getSigner();
+            setSigner(mbSigner);
         }
     }, []);
 
