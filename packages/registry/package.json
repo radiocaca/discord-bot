@@ -1,5 +1,5 @@
 {
-  "name": "bot",
+  "name": "registry",
   "version": "1.0.0",
   "main": "index.ts",
   "license": "MIT",
@@ -15,15 +15,11 @@
     "dotenv": "^16.0.1",
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",
-    "koa-router": "^10.1.1",
-    "node-fetch": "^3.2.4",
-    "web3": "^1.7.3",
-    "web3-eth": "^1.7.3"
+    "koa-router": "^10.1.1"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/koa": "^2.13.4",
-    "@types/node-fetch": "^2.6.1",
     "@types/web3": "^1.2.2",
     "ts-node": "^10.7.0"
   },

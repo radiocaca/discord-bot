@@ -8,7 +8,6 @@ import koaBody from "koa-body"
 import Router from "@koa/router";
 import { ethers } from "ethers";
 import Config from "./config";
-import { GuildMember } from "discord.js";
 
 export class Registry {
   bot: Bot;
