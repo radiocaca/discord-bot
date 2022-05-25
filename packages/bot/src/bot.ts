@@ -50,7 +50,7 @@ export class Bot {
    */
   public async registerCommands() {
     const commands = [
-      new SlashCommandBuilder().setName('verify').setDescription('Verify address'),
+      new SlashCommandBuilder().setName('kyc').setDescription('Verify address'),
     ].map(command => command.toJSON());
 
     const rest = new REST({
@@ -70,9 +70,9 @@ export class Bot {
       const { commandName } = interaction;
 
       switch (commandName) {
-        case "verify":
+        case "kyc":
           interaction.reply(
-            `please verify your account at ${this.config.connectAddress + "?id=" + interaction.user.id}`
+            `please verify your account at ${this.config.connectAddress + "?user=" + interaction.user.id}`
           );
         default:
           return;

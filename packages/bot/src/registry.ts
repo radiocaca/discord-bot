@@ -24,7 +24,10 @@ export class Registry {
   /**
    * serve registry
    */
-  public serve() {
+  public async serve() {
+    await this.bot.registerCommands();
+    await this.bot.login();
+
     const app = new Koa();
     const router = new Router();
 
@@ -53,10 +56,12 @@ export class Registry {
       }
     })
 
+    const port = Number(process.env.REGISTRY_PORT);
+    console.log(`registry listening at ${port}`)
     app
       .use(koaBody())
       .use(router.routes())
       .use(router.allowedMethods())
-      .listen(Number(process.env.REGISTRY_PORT));
+      .listen(port);
   }
 }
