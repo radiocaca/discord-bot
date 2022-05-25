@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useState, useContext } from "react";
 import { ethers } from "ethers";
-import { ProviderContext } from "context/provider";
+import { SignerContext } from "context/signer";
 
 type Wallet = "Metamask" | "WalletConnect" | "CoinbaseWallet";
 
@@ -15,14 +15,14 @@ const Logo: FC<{name: string}> = ({ name }) => {
 export const WalletButton: FC<{
     name: Wallet,
 }> = ({ name }) => {
-    const { setAccounts, provider, setProvider } = useContext(ProviderContext);
+    const { signer, setSigner } = useContext(SignerContext);
 
     const cb = useCallback(async () => {
         // TODO
         //
         // only support metamask for now
-        if (name === "Metamask" && provider === undefined) {
-            setProvider(new ethers.providers.Web3Provider((window as any).ethereum));
+        if (name === "Metamask" && signer === undefined) {
+            setSigner((new ethers.providers.Web3Provider((window as any).ethereum)).getSigner());
         }
     }, []);
 
@@ -40,8 +40,6 @@ export const WalletButton: FC<{
 
 export const Wallets: FC<{
 }> = ({ }) => {
-    const { provider, setAccounts } = useContext(ProviderContext);
-
     return (
         <div className="w-full grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 xl:gap-8 md:gap-10 gap-3 p-10" style={{ maxWidth: "1400px" }}>
             {

@@ -2,19 +2,43 @@
  * Component Sign
  */
 import { FC, useContext, useCallback } from "react";
-import { Web3Provider } from "@ethersproject/providers";
-import { ProviderContext } from "context/provider";
+import { SignerContext } from "context/signer";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
 
 export const Sign: FC = () => {
-    const { accounts, provider, setAccounts } = useContext(ProviderContext);
+    const { signer, setErr, setErrHelper } = useContext(SignerContext);
 
     const signMessage = useCallback(async () => {
-        const signer = (provider as Web3Provider).getSigner();
-        const sig = await signer.signMessage("Verify account ownership");
-        const result = ethers.utils.verifyMessage("Verify account ownership", sig);
+        const { user } = useRouter().query;
+        if (signer === undefined) {
+            setErr("Signer not found");
+            setErrHelper("Please reconnect to your wallet");
+            return;
+        };
+
+        if (user === '') {
+            setErr("User not found");
+            setErrHelper("Please click the correct link from discord");
+            return;
+        }
+
+        const sig = await signer.signMessage(String(process.env.kycMessage));
+        const result = ethers.utils.verifyMessage(String(process.env.kycMessage), sig);
         if (result == await signer.getAddress()) {
+            fetch(String(process.env.registry + "/verify"), {
+                method: "POST",
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sig, user })
+            })
             window.location.href = "https://discord.com/channels/975242155725582416/975242155725582419";
+        } else {
+            setErr("Verify failed");
+            setErrHelper("Please click the correct link from discord");
+            return;
         }
     }, []);
 

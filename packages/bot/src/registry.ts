@@ -6,20 +6,18 @@ import Bot from "./bot";
 import { Kyc } from "./kyc";
 import koaBody from "koa-body"
 import Router from "@koa/router";
-import Web3 from "web3";
+import { ethers } from "ethers";
 import Config from "./config";
 import { GuildMember } from "discord.js";
 
 export class Registry {
   bot: Bot;
   config: Config;
-  web3: Web3;
   kyc: Kyc;
 
   constructor() {
     this.bot = new Bot();
     this.config = new Config();
-    this.web3 = new Web3(this.config.infura);
     this.kyc = new Kyc();
   }
 
@@ -31,23 +29,27 @@ export class Registry {
     const router = new Router();
 
     router.post("/verify", async (ctx) => {
-      const sig: string = ctx.request.body.signature;
+      const sig: string = ctx.request.body.sig;
       const user: string = ctx.request.body.user;
       if (!sig || !user) return;
 
       try {
-        // get user ethreum address
-        const address = this.web3.eth.accounts.recover(
-          String(this.web3.utils.sha3("raca")),
-          String(sig),
-        );
+        const address = ethers.utils.verifyMessage(String(process.env.KYC_MESSAGE), sig);
         if (!await this.kyc.verify(address)) {
-          // response verify failed
+          ctx.body = {
+            ok: false,
+            err: "verify failed",
+            errHelper: "Try to disconnect and connect your wallet and then do the verify stuff"
+          }
         }
 
         await this.bot.updateRole(user);
       } catch (err) {
-        // response verify failed
+        ctx.body = {
+          ok: false,
+          err: err,
+          errHelper: "Please try again later"
+        }
       }
     })
 

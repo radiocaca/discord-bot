@@ -1,9 +1,9 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import { ProviderContext, createProvider } from "context/provider";
+import { SignerContext, createSigner } from "context/signer";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <ProviderContext.Provider value={createProvider()}><Component {...pageProps} /></ProviderContext.Provider>
+  return <SignerContext.Provider value={createSigner()}><Component {...pageProps} /></SignerContext.Provider>
 }
 
 export default MyApp

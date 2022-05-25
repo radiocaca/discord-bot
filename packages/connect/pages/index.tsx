@@ -1,27 +1,11 @@
 import type { NextPage } from 'next'
-import { ProviderContext } from "context/provider";
-import { ethers } from "ethers";
+import { SignerContext } from "context/signer";
 import { useEffect, useContext } from "react";
-import { Web3Provider } from "@ethersproject/providers";
 import Head from 'next/head'
 import { Header, Footer, Wallets, Top, Sign } from "components";
 
 const Home: NextPage = () => {
-    const { provider, setProvider, setAccounts } = useContext(ProviderContext);
-
-    useEffect(() => {
-        if ((window as any).ethereum) {
-            setProvider(new ethers.providers.Web3Provider((window as any).ethereum));
-        }
-    }, [])
-
-    useEffect(() => {
-        if (provider === undefined) return;
-
-        (provider as Web3Provider).send("eth_requestAccounts", []).then((accounts) => {
-            setAccounts(accounts)
-        })
-    }, [provider])
+    const { signer, setSigner } = useContext(SignerContext);
 
     return (
         <div className="--raca-bg flex min-h-screen flex-col items-center justify-center bg-zinc-900 text-white font-sans">
@@ -32,8 +16,8 @@ const Home: NextPage = () => {
             <Top />
             <Header />
 
-            {!provider && <Wallets />}
-            {provider && <Sign />}
+            {!signer && <Wallets />}
+            {signer && <Sign />}
 
             <div className="flex flex-1"></div>
         </div>
